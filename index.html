@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>複数画像のAR表示</title>
-    <!-- 最新のA-Frameライブラリ -->
+    <!-- A-Frameライブラリ -->
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-    <!-- AR.js のA-Frameビルド -->
+    <!-- AR.jsライブラリ -->
     <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.0/aframe/build/aframe-ar.js"></script>
     <style>
         body, html { margin: 0; padding: 0; overflow: hidden; }
@@ -14,14 +14,79 @@
     </style>
 </head>
 <body>
-    <!-- A-Frameシーンの設定 -->
     <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
-        <!-- マーカー1：sakura.png を表示 -->
-        <a-marker type="pattern" url="pattern-azuma.patt">
-            <a-image src="azuma.png" position="0 0.5 0" scale="0.5 0.5 0.5" rotation="-90 0 0"></a-image>
+        <!-- マーカー1 -->
+        <a-marker type="pattern" url="makers/pattern-azuma.patt">
+            <a-image src="images/azuma.png" position="0 0.5 0" scale="0.5 0.5 0.5" rotation="-90 0 0"></a-image>
+        </a-marker>
+        <!-- マーカー2 -->
+        <a-marker type="pattern" url="makers/pattern-hanamiti.patt">
+            <a-image src="images/hanamiti.png" position="0 0.5 0" scale="0.5 0.5 0.5" rotation="-90 0 0"></a-image>
+        </a-marker>
+        <!-- マーカー3 -->
+        <a-marker type="pattern" url="makers/pattern-heiwa.patt">
+            <a-image src="images/heiwa.png" position="0 0.5 0" scale="0.5 0.5 0.5" rotation="-90 0 0"></a-image>
+        </a-marker>
+        <!-- マーカー4 -->
+        <a-marker type="pattern" url="makers/pattern-itibangai.patt">
+            <a-image src="images/itibangai.png" position="0 0.5 0" scale="0.5 0.5 0.5" rotation="-90 0 0"></a-image>
+        </a-marker>
+        <!-- マーカー5 -->
+        <a-marker type="pattern" url="makers/pattern-itibangaiirigutisyouwa50.patt">
+            <a-image src="images/itibangaiirigutisyouwa50.png" position="0 0.5 0" scale="0.5 0.5 0.5" rotation="-90 0 0"></a-image>
+        </a-marker>
+        <!-- マーカー6 -->
+        <a-marker type="pattern" url="makers/pattern-kuyakusyo.patt">
+            <a-image src="images/kuyakusyo.png" position="0 0.5 0" scale="0.5 0.5 0.5" rotation="-90 0 0"></a-image>
+        </a-marker>
+        <!-- マーカー7 -->
+        <a-marker type="pattern" url="makers/pattern-maturi1.patt">
+            <a-image src="images/maturi1.png" position="0 0.5 0" scale="0.5 0.5 0.5" rotation="-90 0 0"></a-image>
+        </a-marker>
+        <!-- マーカー8 -->
+        <a-marker type="pattern" url="makers/pattern-maturi2.patt">
+            <a-image src="images/maturi2.png" position="0 0.5 0" scale="0.5 0.5 0.5" rotation="-90 0 0"></a-image>
+        </a-marker>
+        <!-- マーカー9 -->
+        <a-marker type="pattern" url="makers/pattern-maturi3.patt">
+            <a-image src="images/maturi3.png" position="0 0.5 0" scale="0.5 0.5 0.5" rotation="-90 0 0"></a-image>
+        <!-- マーカー10 -->
+        <a-marker type="pattern" url="makers/pattern-maturi4.patt">
+            <a-image src="images/maturi4.png" position="0 0.5 0" scale="0.5 0.5 0.5" rotation="-90 0 0"></a-image>
+        </a-marker>
+        <!-- マーカー11 -->
+        <a-marker type="pattern" url="makers/pattern-maturi5.patt">
+            <a-image src="images/maturi5.png" position="0 0.5 0" scale="0.5 0.5 0.5" rotation="-90 0 0"></a-image>
+        </a-marker>
+        <!-- マーカー12 -->
+        <a-marker type="pattern" url="makers/pattern-nakamise.patt">
+            <a-image src="images/nakamise.png" position="0 0.5 0" scale="0.5 0.5 0.5" rotation="-90 0 0"></a-image>
+        </a-marker>
+        <!-- マーカー13 -->
+        <a-marker type="pattern" url="makers/pattern-nisisinzyuku.patt">
+            <a-image src="images/nisisinzyuku.png" position="0 0.5 0" scale="0.5 0.5 0.5" rotation="-90 0 0"></a-image>
+        </a-marker>
+        <!-- マーカー14 -->
+        <a-marker type="pattern" url="makers/pattern-nisityoukai.patt">
+            <a-image src="images/nisityoukai.png" position="0 0.5 0" scale="0.5 0.5 0.5" rotation="-90 0 0"></a-image>
+        </a-marker>
+        <!-- マーカー15 -->
+        <a-marker type="pattern" url="makers/pattern-sakura.patt">
+            <a-image src="images/sakura.png" position="0 0.5 0" scale="0.5 0.5 0.5" rotation="-90 0 0"></a-image>
+        </a-marker>
+        <!-- マーカー16 -->
+        <a-marker type="pattern" url="makers/pattern-sentorarudoon.patt">
+            <a-image src="images/sentorarudoon.png" position="0 0.5 0" scale="0.5 0.5 0.5" rotation="-90 0 0"></a-image>
+        </a-marker>
+        <!-- マーカー17 -->
+        <a-marker type="pattern" url="makers/pattern-sinesiteli.patt">
+            <a-image src="images/sinesiteli.png" position="0 0.5 0" scale="0.5 0.5 0.5" rotation="-90 0 0"></a-image>
+        </a-marker>
+        <!-- マーカー18 -->
+        <a-marker type="pattern" url="makers/pattern-yasukuni.patt">
+            <a-image src="images/yasukuni.png" position="0 0.5 0" scale="0.5 0.5 0.5" rotation="-90 0 0"></a-image>
         </a-marker>
 
-        <!-- カメラの設定 -->
         <a-entity camera></a-entity>
     </a-scene>
 </body>
