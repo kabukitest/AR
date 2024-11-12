@@ -89,29 +89,6 @@
 
         <a-entity camera></a-entity>
     </a-scene>
-    <script>
-        // マーカーリストの取得
-        const markers = document.querySelectorAll('a-marker');
-        let activeMarker = null;
 
-        // マーカー検出時のイベントリスナー
-        markers.forEach(marker => {
-            marker.addEventListener('markerFound', () => {
-                // 他のマーカーが表示中なら非表示にする
-                if (activeMarker && activeMarker !== marker) {
-                    activeMarker.setAttribute('visible', false);
-                }
-                activeMarker = marker;
-                activeMarker.setAttribute('visible', true);
-            });
-
-            marker.addEventListener('markerLost', () => {
-                // マーカーが見えなくなったらリセット
-                if (activeMarker === marker) {
-                    activeMarker = null;
-                }
-            });
-        });
-    </script>
 </body>
 </html>
