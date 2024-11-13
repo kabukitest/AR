@@ -16,7 +16,7 @@
 <body>
     <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
         <!-- 空間固定画像のエンティティ -->
-        <a-image id="fixed-image" position="0 0 0" scale="0.5 0.5 0.5" visible="false"></a-image>
+        <a-image id="fixed-image" position="0 0 -2" scale="1 1 1" visible="false"></a-image>
 
         <!-- マーカーリスト -->
         <a-marker type="pattern" url="makers/pattern-azuma.patt" id="marker-azuma"></a-marker>
@@ -41,7 +41,6 @@
         <a-entity camera></a-entity>
     </a-scene>
     
-    <!-- スクリプトでマーカーの検出と空間固定表示を制御 -->
     <script>
         // 現在表示されているマーカーID
         let currentMarkerId = null;
@@ -49,16 +48,7 @@
         // 空間固定画像の要素
         const fixedImage = document.querySelector('#fixed-image');
 
-        // マーカーが検出されたときの処理
-        function onMarkerFound(markerId, imageUrl) {
-            if (currentMarkerId !== markerId) {
-                currentMarkerId = markerId;
-                fixedImage.setAttribute('src', imageUrl);
-                fixedImage.setAttribute('visible', 'true');
-            }
-        }
-
-        // マーカーリストに基づいてイベントリスナーを設定
+        // マーカーリストの設定
         const markers = [
             { id: 'marker-azuma', img: 'images/azuma.png' },
             { id: 'marker-hanamiti', img: 'images/hanamiti.png' },
@@ -82,8 +72,22 @@
 
         markers.forEach(marker => {
             const markerElement = document.querySelector(`#${marker.id}`);
+            
+            // マーカーの検出イベント
             markerElement.addEventListener('markerFound', () => {
-                onMarkerFound(marker.id, marker.img);
+                if (currentMarkerId !== marker.id) {
+                    currentMarkerId = marker.id;
+                    fixedImage.setAttribute('src', marker.img);
+                    fixedImage.setAttribute('visible', 'true');
+                }
+            });
+
+            // マーカーの非検出イベント
+            markerElement.addEventListener('markerLost', () => {
+                if (currentMarkerId === marker.id) {
+                    fixedImage.setAttribute('visible', 'false');
+                    currentMarkerId = null;
+                }
             });
         });
     </script>
