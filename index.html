@@ -16,7 +16,7 @@
 <body>
     <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
         <!-- 空間固定画像のエンティティ -->
-        <a-image id="fixed-image" position="0 0 -2" scale="1 1 1" visible="false"></a-image>
+        <a-image id="fixed-image" scale="1 1 1" visible="false"></a-image>
 
         <!-- マーカーリスト -->
         <a-marker type="pattern" url="makers/pattern-azuma.patt" id="marker-azuma"></a-marker>
@@ -30,7 +30,6 @@
 
     <script>
         let currentMarkerId = null;
-        let currentImageUrl = null;
         const fixedImage = document.querySelector('#fixed-image');
 
         // マーカーリストの設定
@@ -44,24 +43,29 @@
 
         // マーカーを検出して画像を表示（空間に固定する）
         function showFixedImage(markerId, imageUrl, position) {
-            if (currentMarkerId !== markerId) {
-                currentMarkerId = markerId;
-                currentImageUrl = imageUrl;
-                fixedImage.setAttribute('position', position);
-                fixedImage.setAttribute('src', imageUrl);
-                fixedImage.setAttribute('visible', 'true');
-            }
+            currentMarkerId = markerId;
+            fixedImage.setAttribute('src', imageUrl);
+            fixedImage.setAttribute('visible', 'true');
         }
 
-        // マーカーリストを走査し、イベントリスナーを設定
+        // ワールド座標を取得して画像を空間に固定
+        function setFixedImagePosition(markerElement) {
+            const markerObj = markerElement.object3D;
+            const worldPosition = new THREE.Vector3();
+            markerObj.getWorldPosition(worldPosition);
+            
+            fixedImage.object3D.position.set(worldPosition.x, worldPosition.y, worldPosition.z);
+            fixedImage.object3D.rotation.copy(markerObj.rotation);
+        }
+
+        // マーカーリストを走査してイベントリスナーを設定
         markers.forEach(marker => {
             const markerElement = document.querySelector(`#${marker.id}`);
             
             if (markerElement) {
-                markerElement.addEventListener('markerFound', (event) => {
-                    // マーカーが検出されたときの処理
-                    const position = event.target.getAttribute('position');
-                    showFixedImage(marker.id, marker.img, position);
+                markerElement.addEventListener('markerFound', () => {
+                    showFixedImage(marker.id, marker.img);
+                    setFixedImagePosition(markerElement);
                 });
 
                 markerElement.addEventListener('markerLost', () => {
@@ -73,7 +77,7 @@
             }
         });
 
-        // マーカーが再度検出されるまで画像を表示し続ける
+        // 画面の再描画ループ
         function updateVisibility() {
             if (currentMarkerId) {
                 fixedImage.setAttribute('visible', 'true');
