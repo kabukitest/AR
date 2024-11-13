@@ -88,15 +88,11 @@
         { id: 'marker-yasukuni', img: 'images/yasukuni.png' }
     ];
 
-    markers.forEach(marker => {
+   markers.forEach(marker => {
         const markerElement = document.querySelector(`#${marker.id}`);
         // マーカーが検出されたときのイベントリスナー
         markerElement.addEventListener('markerFound', () => {
             onMarkerFound(marker.id, marker.img);
-        });
-        // マーカーが見えなくなったときのイベントリスナー
-        markerElement.addEventListener('markerLost', () => {
-            onMarkerLost(marker.id);
         });
     });
 </script>
