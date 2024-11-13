@@ -16,7 +16,7 @@
 <body>
     <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
         <!-- 中央に固定する画像のエンティティ -->
-        <a-image id="central-image" position="0 0 0" scale="0.5 0.5 0.5" visible="false"></a-image>
+        <a-image id="central-image" position="0 0 -2" scale="0.5 0.5 0.5" visible="false"></a-image>
 
         <!-- マーカーリスト -->
         <a-marker type="pattern" url="makers/pattern-azuma.patt" id="marker-azuma"></a-marker>
@@ -90,11 +90,15 @@
 
     markers.forEach(marker => {
         const markerElement = document.querySelector(`#${marker.id}`);
+        // マーカーが検出されたときのイベントリスナー
         markerElement.addEventListener('markerFound', () => {
             onMarkerFound(marker.id, marker.img);
         });
+        // マーカーが見えなくなったときのイベントリスナー
         markerElement.addEventListener('markerLost', () => {
             onMarkerLost(marker.id);
         });
     });
 </script>
+</body>
+</html>
