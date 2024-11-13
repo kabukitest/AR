@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>単一マーカーAR表示</title>
+    <title>空間固定の単一マーカーAR表示</title>
     <!-- A-Frameライブラリ -->
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <!-- AR.jsライブラリ -->
@@ -15,15 +15,15 @@
 </head>
 <body>
     <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
-        <!-- 中央に固定する画像のエンティティ -->
-        <a-image id="central-image" position="0 0 -2" scale="0.5 0.5 0.5" visible="false"></a-image>
+        <!-- 空間固定画像のエンティティ -->
+        <a-image id="fixed-image" position="0 0 0" scale="0.5 0.5 0.5" visible="false"></a-image>
 
         <!-- マーカーリスト -->
         <a-marker type="pattern" url="makers/pattern-azuma.patt" id="marker-azuma"></a-marker>
         <a-marker type="pattern" url="makers/pattern-hanamiti.patt" id="marker-hanamiti"></a-marker>
         <a-marker type="pattern" url="makers/pattern-heiwa.patt" id="marker-heiwa"></a-marker>
         <a-marker type="pattern" url="makers/pattern-itibangai.patt" id="marker-itibangai"></a-marker>
-        <a-marker type="pattern" url="makers/pattern-itibangaiiriguti syouwa40.patt" id="marker-itibangaiiriguti syouwa40"></a-marker>
+        <a-marker type="pattern" url="makers/pattern-itibangaiiriguti_syouwa40.patt" id="marker-itibangaiiriguti_syouwa40"></a-marker>
         <a-marker type="pattern" url="makers/pattern-kuyakusyo.patt" id="marker-kuyakusyo"></a-marker>
         <a-marker type="pattern" url="makers/pattern-maturi1.patt" id="marker-maturi1"></a-marker>
         <a-marker type="pattern" url="makers/pattern-maturi2.patt" id="marker-maturi2"></a-marker>
@@ -41,60 +41,51 @@
         <a-entity camera></a-entity>
     </a-scene>
     
-<!-- スクリプトでマーカーごとに画像を表示 -->
-<script>
-    // 現在表示されているマーカーID
-    let currentMarkerId = null;
-    
-    // 中央画像の要素
-    const centralImage = document.querySelector('#central-image');
+    <!-- スクリプトでマーカーの検出と空間固定表示を制御 -->
+    <script>
+        // 現在表示されているマーカーID
+        let currentMarkerId = null;
+        
+        // 空間固定画像の要素
+        const fixedImage = document.querySelector('#fixed-image');
 
-    // マーカーが検出されたときの処理
-    function onMarkerFound(markerId, imageUrl) {
-        if (currentMarkerId !== markerId) {
-            currentMarkerId = markerId;
-            centralImage.setAttribute('src', imageUrl);
-            centralImage.setAttribute('visible', 'true');
+        // マーカーが検出されたときの処理
+        function onMarkerFound(markerId, imageUrl) {
+            if (currentMarkerId !== markerId) {
+                currentMarkerId = markerId;
+                fixedImage.setAttribute('src', imageUrl);
+                fixedImage.setAttribute('visible', 'true');
+            }
         }
-    }
 
-    // マーカーが見えなくなったときの処理
-    function onMarkerLost(markerId) {
-        if (currentMarkerId === markerId) {
-            centralImage.setAttribute('visible', 'false');
-            currentMarkerId = null;
-        }
-    }
+        // マーカーリストに基づいてイベントリスナーを設定
+        const markers = [
+            { id: 'marker-azuma', img: 'images/azuma.png' },
+            { id: 'marker-hanamiti', img: 'images/hanamiti.png' },
+            { id: 'marker-heiwa', img: 'images/heiwa.png' },
+            { id: 'marker-itibangai', img: 'images/itibangai.png' },
+            { id: 'marker-itibangaiiriguti_syouwa40', img: 'images/itibangaiiriguti_syouwa40.png' },
+            { id: 'marker-kuyakusyo', img: 'images/kuyakusyo.png' },
+            { id: 'marker-maturi1', img: 'images/maturi1.png' },
+            { id: 'marker-maturi2', img: 'images/maturi2.png' },
+            { id: 'marker-maturi3', img: 'images/maturi3.png' },
+            { id: 'marker-maturi4', img: 'images/maturi4.png' },
+            { id: 'marker-maturi5', img: 'images/maturi5.png' },
+            { id: 'marker-nakamise', img: 'images/nakamise.png' },
+            { id: 'marker-nisisinzyuku', img: 'images/nisisinzyuku.png' },
+            { id: 'marker-nisityoukai', img: 'images/nisityoukai.png' },
+            { id: 'marker-sakura', img: 'images/sakura.png' },
+            { id: 'marker-sentorarudoori', img: 'images/sentorarudoori.png' },
+            { id: 'marker-sinesiteli', img: 'images/sinesiteli.png' },
+            { id: 'marker-yasukuni', img: 'images/yasukuni.png' }
+        ];
 
-    // 各マーカーにイベントリスナーを追加
-    const markers = [
-        { id: 'marker-azuma', img: 'images/azuma.png' },
-        { id: 'marker-hanamiti', img: 'images/hanamiti.png' },
-        { id: 'marker-heiwa', img: 'images/heiwa.png' },
-        { id: 'marker-itibangai', img: 'images/itibangai.png' },
-        { id: 'marker-itibangaiiriguti syouwa40', img: 'images/itibangaiiriguti syouwa40.png' },
-        { id: 'marker-kuyakusyo', img: 'images/kuyakusyo.png' },
-        { id: 'marker-maturi1', img: 'images/maturi1.png' },
-        { id: 'marker-maturi2', img: 'images/maturi2.png' },
-        { id: 'marker-maturi3', img: 'images/maturi3.png' },
-        { id: 'marker-maturi4', img: 'images/maturi4.png' },
-        { id: 'marker-maturi5', img: 'images/maturi5.png' },
-        { id: 'marker-nakamise', img: 'images/nakamise.png' },
-        { id: 'marker-nisisinzyuku', img: 'images/nisisinzyuku.png' },
-        { id: 'marker-nisityoukai', img: 'images/nisityoukai.png' },
-        { id: 'marker-sakura', img: 'images/sakura.png' },
-        { id: 'marker-sentorarudoori', img: 'images/sentorarudoori.png' },
-        { id: 'marker-sinesiteli', img: 'images/sinesiteli.png' },
-        { id: 'marker-yasukuni', img: 'images/yasukuni.png' }
-    ];
-
-   markers.forEach(marker => {
-        const markerElement = document.querySelector(`#${marker.id}`);
-        // マーカーが検出されたときのイベントリスナー
-        markerElement.addEventListener('markerFound', () => {
-            onMarkerFound(marker.id, marker.img);
+        markers.forEach(marker => {
+            const markerElement = document.querySelector(`#${marker.id}`);
+            markerElement.addEventListener('markerFound', () => {
+                onMarkerFound(marker.id, marker.img);
+            });
         });
-    });
-</script>
+    </script>
 </body>
 </html>
