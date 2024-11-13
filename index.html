@@ -58,14 +58,6 @@
         }
     }
 
-    // マーカーが見えなくなったときの処理
-    function onMarkerLost(markerId) {
-        if (currentMarkerId === markerId) {
-            centralImage.setAttribute('visible', 'false');
-            currentMarkerId = null;
-        }
-    }
-
     // 各マーカーにイベントリスナーを追加
     const markers = [
         { id: 'marker-azuma', img: 'images/azuma.png' },
@@ -93,10 +85,6 @@
         // マーカーが検出されたときのイベントリスナー
         markerElement.addEventListener('markerFound', () => {
             onMarkerFound(marker.id, marker.img);
-        });
-        // マーカーが見えなくなったときのイベントリスナー
-        markerElement.addEventListener('markerLost', () => {
-            onMarkerLost(marker.id);
         });
     });
 </script>
