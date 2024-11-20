@@ -15,7 +15,7 @@
 </head>
 <body>
     <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
-        <!-- 空間に固定された画像 -->
+        <!-- 空間固定の画像 -->
         <a-image id="fixed-image" position="0 0 -2" scale="1 1 1" visible="false"></a-image>
 
         <!-- マーカー定義 -->
@@ -38,15 +38,14 @@
         <a-marker type="pattern" url="makers/pattern-sinesiteli.patt" id="marker-sinesiteli"></a-marker>
         <a-marker type="pattern" url="makers/pattern-yasukuni.patt" id="marker-yasukuni"></a-marker>
 
-        <!-- 他のマーカーも追加可能 -->
+        <!-- 他のマーカーを追加可能 -->
 
         <a-entity camera></a-entity>
     </a-scene>
 
     <script>
         let currentMarkerId = null; // 現在のマーカーID
-        let fixedImagePosition = null; // 空間内の固定位置
-        const fixedImage = document.querySelector('#fixed-image');
+        let fixedImage = document.querySelector('#fixed-image');
 
         // マーカーリストの設定
         const markers = [
@@ -71,31 +70,29 @@
 
         ];
 
-        // マーカーを検出して空間に固定
-        function setFixedImage(markerId, imageUrl, position) {
-            if (!fixedImagePosition) { // 空間固定が未設定の場合のみ処理
-                currentMarkerId = markerId;
-                fixedImagePosition = position; // 空間内の位置を記録
-                fixedImage.setAttribute('position', fixedImagePosition); // 位置を設定
-                fixedImage.setAttribute('src', imageUrl); // 表示する画像を設定
-                fixedImage.setAttribute('visible', 'true'); // 表示を有効化
-            }
+        // マーカーを検出して空間に画像を固定
+        function setFixedImage(markerId, imageUrl, worldPosition) {
+            currentMarkerId = markerId;
+            fixedImage.setAttribute('position', `${worldPosition.x} ${worldPosition.y} ${worldPosition.z}`); // 空間座標を設定
+            fixedImage.setAttribute('src', imageUrl); // 表示する画像を設定
+            fixedImage.setAttribute('visible', 'true'); // 表示を有効化
         }
 
         // マーカーごとにイベントリスナーを追加
         markers.forEach(marker => {
             const markerElement = document.querySelector(`#${marker.id}`);
-            
+
             if (markerElement) {
                 markerElement.addEventListener('markerFound', () => {
-                    // マーカーが検出されたときの処理
-                    const position = markerElement.object3D.position; // 3D空間上の位置を取得
-                    const fixedPositionString = `${position.x} ${position.y} ${position.z}`;
-                    setFixedImage(marker.id, marker.img, fixedPositionString);
+                    if (!currentMarkerId) { // 初回のみ処理
+                        const worldPosition = new THREE.Vector3();
+                        markerElement.object3D.getWorldPosition(worldPosition); // マーカーのワールド座標を取得
+                        setFixedImage(marker.id, marker.img, worldPosition); // 画像を固定
+                    }
                 });
 
                 markerElement.addEventListener('markerLost', () => {
-                    // マーカーが見えなくなっても空間内の位置は保持するので何もしない
+                    // マーカーが見えなくなっても画像は空間内に固定されたまま
                 });
             }
         });
