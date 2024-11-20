@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>空間固定AR表示</title>
+    <title>AR空間固定360度表示</title>
     <!-- A-Frameライブラリ -->
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <!-- AR.jsライブラリ -->
@@ -15,8 +15,8 @@
 </head>
 <body>
     <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
-        <!-- 空間固定の画像 -->
-        <a-image id="fixed-image" position="0 0 -2" scale="1 1 1" visible="false"></a-image>
+        <!-- 空間固定画像 -->
+        <a-image id="fixed-image" scale="2 2 2" visible="false"></a-image>
 
         <!-- マーカー定義 -->
         <a-marker type="pattern" url="makers/pattern-azuma.patt" id="marker-azuma"></a-marker>
@@ -37,15 +37,14 @@
         <a-marker type="pattern" url="makers/pattern-sentorarudoori.patt" id="marker-sentorarudoori"></a-marker>
         <a-marker type="pattern" url="makers/pattern-sinesiteli.patt" id="marker-sinesiteli"></a-marker>
         <a-marker type="pattern" url="makers/pattern-yasukuni.patt" id="marker-yasukuni"></a-marker>
-
         <!-- 他のマーカーを追加可能 -->
 
         <a-entity camera></a-entity>
     </a-scene>
 
     <script>
-        let currentMarkerId = null; // 現在のマーカーID
-        let fixedImage = document.querySelector('#fixed-image');
+        let isImageSet = false; // 一度だけ固定するためのフラグ
+        const fixedImage = document.querySelector('#fixed-image');
 
         // マーカーリストの設定
         const markers = [
@@ -70,29 +69,27 @@
 
         ];
 
-        // マーカーを検出して空間に画像を固定
+        // マーカー検出時に空間固定画像を設定
         function setFixedImage(markerId, imageUrl, worldPosition) {
-            currentMarkerId = markerId;
-            fixedImage.setAttribute('position', `${worldPosition.x} ${worldPosition.y} ${worldPosition.z}`); // 空間座標を設定
-            fixedImage.setAttribute('src', imageUrl); // 表示する画像を設定
-            fixedImage.setAttribute('visible', 'true'); // 表示を有効化
+            if (!isImageSet) {
+                isImageSet = true; // 一度だけ設定
+                fixedImage.setAttribute('position', `${worldPosition.x} ${worldPosition.y} ${worldPosition.z}`); // ワールド座標を使用
+                fixedImage.setAttribute('src', imageUrl);
+                fixedImage.setAttribute('visible', 'true');
+            }
         }
 
-        // マーカーごとにイベントリスナーを追加
+        // マーカーごとにイベントリスナーを設定
         markers.forEach(marker => {
             const markerElement = document.querySelector(`#${marker.id}`);
 
             if (markerElement) {
                 markerElement.addEventListener('markerFound', () => {
-                    if (!currentMarkerId) { // 初回のみ処理
+                    if (!isImageSet) {
                         const worldPosition = new THREE.Vector3();
                         markerElement.object3D.getWorldPosition(worldPosition); // マーカーのワールド座標を取得
-                        setFixedImage(marker.id, marker.img, worldPosition); // 画像を固定
+                        setFixedImage(marker.id, marker.img, worldPosition); // 画像を空間固定
                     }
-                });
-
-                markerElement.addEventListener('markerLost', () => {
-                    // マーカーが見えなくなっても画像は空間内に固定されたまま
                 });
             }
         });
