@@ -26,7 +26,7 @@
         <a-marker type="pattern" url="makers/pattern-itibangaiiriguti_syouwa40.patt" id="marker-itibangaiiriguti_syouwa40"></a-marker>
 
         <!-- カメラ -->
-        <a-entity camera position="0 0 0" look-controls="enabled: false"></a-entity>
+        <a-entity camera="fov: 75" position="0 0 0" look-controls="enabled: false"></a-entity>
     </a-scene>
 
     <script>
@@ -87,12 +87,33 @@
             event.preventDefault();
         }, { passive: false });
 
+        // ホイールズームの無効化
+        document.querySelector('a-scene').addEventListener('wheel', (event) => {
+            event.preventDefault();
+        }, { passive: false });
+
+        // カメラのFOV監視とリセット
+        const camera = document.querySelector('[camera]');
+        const resetCameraZoom = () => {
+            camera.setAttribute('camera', 'fov', 75);
+        };
+
+        setInterval(() => {
+            const currentFOV = camera.getAttribute('camera').fov;
+            if (currentFOV !== 75) {
+                console.log('Unexpected zoom detected, resetting...');
+                resetCameraZoom();
+            }
+        }, 1000);
+
         // デバッグ用: カメラの動きを確認
-        document.querySelector('[camera]').addEventListener('componentchanged', (evt) => {
+        camera.addEventListener('componentchanged', (evt) => {
             if (evt.detail.name === 'position' || evt.detail.name === 'rotation') {
                 console.log(`Camera ${evt.detail.name}:`, evt.detail.newData);
             }
         });
+
+        console.log('Initialization complete. Camera FOV set to 75.');
     </script>
 </body>
 </html>
