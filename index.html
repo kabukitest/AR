@@ -12,7 +12,7 @@
     </style>
 </head>
 <body>
-    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false; sourceWidth: 1280; sourceHeight: 720; detectionMode: mono_and_matrix;">
+    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
         <!-- 空間固定画像を表示するエンティティ -->
         <a-entity id="fixed-image" geometry="primitive: plane; height: 2; width: 2" 
                   material="side: double; transparent: true;" 
@@ -26,7 +26,7 @@
         <a-marker type="pattern" url="makers/pattern-itibangaiiriguti_syouwa40.patt" id="marker-itibangaiiriguti_syouwa40"></a-marker>
 
         <!-- カメラ -->
-        <a-entity camera="fov: 75" position="0 0 0" look-controls="enabled: false"></a-entity>
+        <a-entity camera look-controls></a-entity>
     </a-scene>
 
     <script>
@@ -47,7 +47,7 @@
 
         // マーカーのイベントリスナーを設定
         markers.forEach(marker => {
-            const markerElement = document.querySelector(`#${marker.id}`);
+            const markerElement = document.querySelector(#${marker.id});
 
             if (markerElement) {
                 markerElement.addEventListener('markerFound', () => {
@@ -61,7 +61,7 @@
                         fixedImage.setAttribute('material', 'src', marker.img);
                         fixedImage.setAttribute('visible', 'true');
 
-                        console.log(`Image for ${marker.id} positioned at:`, fixedPosition);
+                        console.log(Image for ${marker.id} positioned at:, fixedPosition);
 
                         isObjectFixed = true; // 固定フラグを有効化
                     }
@@ -71,7 +71,7 @@
 
         // マーカーが見えなくなっても画像を保持
         markers.forEach(marker => {
-            const markerElement = document.querySelector(`#${marker.id}`);
+            const markerElement = document.querySelector(#${marker.id});
 
             if (markerElement) {
                 markerElement.addEventListener('markerLost', () => {
@@ -82,38 +82,12 @@
             }
         });
 
-        // タッチ操作による不意なズームの防止
-        document.querySelector('a-scene').addEventListener('touchmove', (event) => {
-            event.preventDefault();
-        }, { passive: false });
-
-        // ホイールズームの無効化
-        document.querySelector('a-scene').addEventListener('wheel', (event) => {
-            event.preventDefault();
-        }, { passive: false });
-
-        // カメラのFOV監視とリセット
-        const camera = document.querySelector('[camera]');
-        const resetCameraZoom = () => {
-            camera.setAttribute('camera', 'fov', 75);
-        };
-
-        setInterval(() => {
-            const currentFOV = camera.getAttribute('camera').fov;
-            if (currentFOV !== 75) {
-                console.log('Unexpected zoom detected, resetting...');
-                resetCameraZoom();
-            }
-        }, 1000);
-
         // デバッグ用: カメラの動きを確認
-        camera.addEventListener('componentchanged', (evt) => {
-            if (evt.detail.name === 'position' || evt.detail.name === 'rotation') {
-                console.log(`Camera ${evt.detail.name}:`, evt.detail.newData);
+        document.querySelector('a-entity[camera]').addEventListener('componentchanged', (evt) => {
+            if (evt.detail.name === 'rotation') {
+                console.log('Camera rotation:', evt.detail.newData);
             }
         });
-
-        console.log('Initialization complete. Camera FOV set to 75.');
     </script>
 </body>
 </html>
