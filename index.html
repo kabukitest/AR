@@ -3,65 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ARカメラ起動のみ</title>
+    <title>AR空間固定（修正版）</title>
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.0/aframe/build/aframe-ar.js"></script>
     <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            width: 100%;
-            height: 100%;
-        }
-
-        a-scene {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-        }
-
-        video {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            object-fit: cover; /* 縦横比を維持して画面全体にフィット */
-        }
+        body, html { margin: 0; padding: 0; overflow: hidden; }
+        a-scene { width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; }
     </style>
 </head>
 <body>
-    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
-        <!-- カメラエンティティ -->
-        <a-entity camera></a-entity>
+    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false; videoTexture: true;">
+        <!-- 空間固定画像を表示するエンティティ -->
+        <a-entity id="fixed-image" geometry="primitive: plane; height: 2; width: 2" 
+                  material="side: double; transparent: true;" 
+                  position="0 0 0" visible="false"></a-entity>
+
+        <!-- マーカーリスト -->
+        <a-marker type="pattern" url="makers/pattern-azuma.patt" id="marker-azuma"></a-marker>
+        <a-marker type="pattern" url="makers/pattern-hanamiti.patt" id="marker-hanamiti"></a-marker>
+        <a-marker type="pattern" url="makers/pattern-heiwa.patt" id="marker-heiwa"></a-marker>
+        <a-marker type="pattern" url="makers/pattern-itibangai.patt" id="marker-itibangai"></a-marker>
+        <a-marker type="pattern" url="makers/pattern-itibangaiiriguti_syouwa40.patt" id="marker-itibangaiiriguti_syouwa40"></a-marker>
+
+        <!-- カメラ -->
+        <a-entity camera look-controls></a-entity>
     </a-scene>
 
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const arScene = document.querySelector("a-scene");
+        const fixedImage = document.querySelector('#fixed-image');
 
-            if (arScene) {
-                arScene.addEventListener("loaded", () => {
-                    const videoElement = arScene.systems["arjs"].sourceElement;
+        // マーカーリストと対応する画像
+        const markers = [
+            { id: 'marker-azuma', img: 'images/azuma.png' },
+            { id: 'marker-hanamiti', img: 'images/hanamiti.png' },
+            { id: 'marker-heiwa', img: 'images/heiwa.png' },
+            { id: 'marker-itibangai', img: 'images/itibangai.png' },
+            { id: 'marker-itibangaiiriguti_syouwa40', img: 'images/itibangaiiriguti_syouwa40.png' }
+        ];
 
-                    if (videoElement && videoElement.tagName === "VIDEO") {
-                        // カメラ映像を適切に表示
-                        videoElement.style.position = "absolute";
-                        videoElement.style.top = "0";
-                        videoElement.style.left = "0";
-                        videoElement.style.width = "100vw";
-                        videoElement.style.height = "100vh";
-                        videoElement.style.objectFit = "cover";
-                        console.log("カメラが起動しました");
-                    } else {
-                        console.error("AR.jsのビデオ要素が見つかりません。");
+        // 空間固定用のフラグ
+        let isObjectFixed = false;
+        let fixedPosition = null;
+
+        // マーカーのイベントリスナーを設定
+        markers.forEach(marker => {
+            const markerElement = document.querySelector(`#${marker.id}`);
+
+            if (markerElement) {
+                markerElement.addEventListener('markerFound', () => {
+                    if (!isObjectFixed) {
+                        const worldPosition = new THREE.Vector3();
+                        markerElement.object3D.getWorldPosition(worldPosition);
+
+                        // ワールド座標に画像を固定
+                        fixedPosition = { x: worldPosition.x, y: worldPosition.y, z: worldPosition.z };
+                        fixedImage.setAttribute('position', fixedPosition);
+                        fixedImage.setAttribute('material', 'src', marker.img);
+                        fixedImage.setAttribute('visible', 'true');
+
+                        console.log(`Image for ${marker.id} positioned at:`, fixedPosition);
+
+                        isObjectFixed = true; // 固定フラグを有効化
                     }
                 });
-            } else {
-                console.error("A-Frameシーンが正しくロードされていません。");
+            }
+        });
+
+        // マーカーが見えなくなっても画像を保持
+        markers.forEach(marker => {
+            const markerElement = document.querySelector(`#${marker.id}`);
+
+            if (markerElement) {
+                markerElement.addEventListener('markerLost', () => {
+                    if (isObjectFixed) {
+                        console.log('Marker lost, but object remains at fixed position:', fixedPosition);
+                    }
+                });
+            }
+        });
+
+        // 映像のサイズ調整（カメラの拡大を防止）
+        document.querySelector("a-scene").addEventListener("loaded", () => {
+            const videoElement = document.querySelector("video");
+            if (videoElement) {
+                videoElement.style.objectFit = "cover"; // 縦横比を維持して画面全体にフィット
+                videoElement.style.width = "100vw";
+                videoElement.style.height = "100vh";
             }
         });
     </script>
